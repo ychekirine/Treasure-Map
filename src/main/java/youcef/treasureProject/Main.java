@@ -19,6 +19,5 @@ public class Main {
         }
         treasureMap.movementSimulation();
         OutputFileWriter.writeFile(treasureMap, "src/main/resources/output.txt");
-
     }
 }

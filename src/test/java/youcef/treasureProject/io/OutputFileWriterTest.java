@@ -1,30 +1,32 @@
 package youcef.treasureProject.io;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import youcef.treasureProject.enums.Orientation;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OutputFileWriterTest {
 
-    @Test
-    void orientation_to_string_should_return_n(){
-        assertEquals("N", OutputFileWriter.orientationtoString(Orientation.NORTH));
+    private static Stream<Arguments> OrientationToStringOrientations() {
+        return Stream.of(
+                Arguments.of("WhenOrientationNorthThenStringN", Orientation.NORTH, "N"),
+                Arguments.of("WhenOrientationEastThenStringE", Orientation.EAST, "E"),
+                Arguments.of("WhenOrientationSouthThenStringS", Orientation.SOUTH, "S"),
+                Arguments.of("WhenOrientationWestThenStringO", Orientation.WEST, "O")
+        );
     }
 
-    @Test
-    void orientation_to_string_should_return_s(){
-        assertEquals("S", OutputFileWriter.orientationtoString(Orientation.SOUTH));
+    @ParameterizedTest(name ="{0}")
+    @MethodSource("OrientationToStringOrientations")
+    void utest_orientation_to_string(String name, Orientation orientationToString, String expected){
+        assertEquals(expected, OutputFileWriter.orientationtoString(orientationToString));
     }
 
-    @Test
-    void orientation_to_string_should_return_e(){
-        assertEquals("E", OutputFileWriter.orientationtoString(Orientation.EAST));
-    }
 
-    @Test
-    void orientation_to_string_should_return_o(){
-        assertEquals("O", OutputFileWriter.orientationtoString(Orientation.WEST));
-    }
 
 }

@@ -16,6 +16,10 @@ public class EntryFileParser {
 
     public Optional<TreasureMap> parse (String filePath){
 
+        if (filePath == null || filePath.isEmpty()){
+            throw new IllegalArgumentException("Path file must be provided for parsing!");
+        }
+
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
             int[] mapSize;
             int[] treasureArray;
@@ -83,8 +87,6 @@ public class EntryFileParser {
         return stringToQueueMovement(movement);
     }
 
-    // TODO Need to verify all args to parse return an Adventurer + maybe use optional
-    //  + ABOVE ALL CHANGE STRUCTURE OF ALL PARSERS TO TAKE THE TREASURE MAP
     public Adventurer adventurerParser (String line){
         String[] adventurerInfoAsArray = line.split(" - ");
         if (adventurerInfoAsArray.length != 6){

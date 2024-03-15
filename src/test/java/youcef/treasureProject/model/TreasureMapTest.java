@@ -1,11 +1,16 @@
 package youcef.treasureProject.model;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import youcef.treasureProject.enums.Orientation;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,9 +21,9 @@ class TreasureMapTest {
     private List<Position> mountains;
     private Map<Position, Integer> treasures;
 
+
     @BeforeEach
     void setUp(){
-
         Position mountainPosition = new Position(1,1);
         Position treasurePosition = new Position(2,2);
 
@@ -27,128 +32,51 @@ class TreasureMapTest {
 
         treasures = new HashMap<>();
         treasures.put(treasurePosition, 3);
-
     }
 
-    @Test
-    void is_in_map_range_north_2_2_should_return_true() {
+    private static Stream<Arguments> IsInMapRangeAdventurerPositions() {
+        return Stream.of(
+                Arguments.of("WhenAdventurer_North_2_2AndMapSize3_3ThenTrue", Orientation.NORTH, 2, 2, true),
+                Arguments.of("WhenAdventurer_North_0_0AndMapSize3_3ThenFalse", Orientation.NORTH, 0, 0, false),
+                Arguments.of("WhenAdventurer_East_0_0AndMapSize3_3ThenTrue", Orientation.EAST, 0, 0, true),
+                Arguments.of("WhenAdventurer_East_2_2AndMapSize3_3ThenFalse", Orientation.EAST, 2, 2, false),
+                Arguments.of("WhenAdventurer_South_0_0AndMapSize3_3ThenTrue", Orientation.SOUTH, 0, 0, true),
+                Arguments.of("WhenAdventurer_South_2_2AndMapSize3_3ThenFalse", Orientation.SOUTH, 2, 2, false),
+                Arguments.of("WhenAdventurer_West_0_0AndMapSize3_3ThenFalse", Orientation.WEST, 0, 0, false),
+                Arguments.of("WhenAdventurer_West_2_2AndMapSize3_3ThenTrue", Orientation.WEST, 2, 2, true)
+        );
+    }
 
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.NORTH,new Position(2,2));
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("IsInMapRangeAdventurerPositions")
+    void utest_is_forward_in_map_range(String name, Orientation orientation, int horizontalPosition, int verticalPosition, boolean expect) {
+        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), orientation,new Position(horizontalPosition,verticalPosition));
         adventurerList = new LinkedList<>();
         adventurerList.add(lambdaAdventurer);
 
         TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
         Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(true, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
+        assertEquals(expect, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
     }
 
-    @Test
-    void is_in_map_range_north_1_0_should_return_false() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.NORTH,new Position(1,0));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(false, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
+    private static Stream<Arguments> IsMountainOrAdventurerForwardAdventurerPositions() {
+        return Stream.of(
+                Arguments.of("WhenAdventurer_North_1_2AndMountain1_1ThenTrue", Orientation.NORTH, 1, 2, true),
+                Arguments.of("WhenAdventurer_North_2_2AndMountain1_1ThenFalse", Orientation.NORTH, 2, 2, false),
+                Arguments.of("WhenAdventurer_East_1_2AndAdventurer2_2ThenTrue", Orientation.EAST, 1, 2, true),
+                Arguments.of("WhenAdventurer_East_0_2AndAdventurer2_2ThenFalse", Orientation.EAST, 0, 2, false),
+                Arguments.of("WhenAdventurer_South_2_1AndAdventurer2_2ThenTrue", Orientation.SOUTH, 2, 1, true),
+                Arguments.of("WhenAdventurer_South_0_1AndAdventurer2_2ThenFalse", Orientation.SOUTH, 0, 1, false),
+                Arguments.of("WhenAdventurer_West_2_1AndMountain1_1ThenTrue", Orientation.WEST, 2, 1, true),
+                Arguments.of("WhenAdventurer_West_1_2AndMountain1_1ThenFalse", Orientation.WEST, 1, 2, false)
+        );
     }
 
-    @Test
-    void is_in_map_range_east_0_0_should_return_true() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.EAST,new Position(0,0));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(true, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
-    }
-
-    @Test
-    void is_in_map_range_east_2_2_should_return_false() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.EAST,new Position(2,2));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(false, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
-    }
-
-    @Test
-    void is_in_map_range_south_0_0_should_return_true() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.SOUTH,new Position(0,0));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(true, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
-    }
-
-    @Test
-    void is_in_map_range_south_2_2_should_return_false() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.SOUTH,new Position(2,2));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(false, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
-    }
-
-    @Test
-    void is_in_map_range_west_0_0_should_return_false() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.WEST,new Position(0,0));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(false, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
-    }
-
-    @Test
-    void is_in_map_range_west_2_2_should_return_false() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.WEST,new Position(2,2));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        assertEquals(true, treasureMap.isForwardInMapRange(firstAdventurer.getOrientation(), firstAdventurer.getPosition()));
-    }
-
-    @Test
-    void is_mountain_or_adventurer_forward_should_return_true_mountain_north_case() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.NORTH,new Position(1,2));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        List<Position> adventurersPosition = adventurerList.stream().map(adventurer -> adventurer.getPosition()).collect(Collectors.toList());
-        assertEquals(true, treasureMap.isMountainOrAdventurerForward(firstAdventurer.getOrientation(),firstAdventurer.getPosition(),mountains,adventurersPosition));
-    }
-
-    @Test
-    void is_mountain_or_adventurer_forward_should_return_true_adventurer_south_case() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.SOUTH,new Position(2,2));
-        Adventurer adventurerSouthOfLambda  = new Adventurer("South of lambda", new LinkedList<>(), Orientation.SOUTH,new Position(2,3));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-        adventurerList.add(adventurerSouthOfLambda);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        List<Position> adventurersPosition = adventurerList.stream().map(adventurer -> adventurer.getPosition()).collect(Collectors.toList());
-        assertEquals(true, treasureMap.isMountainOrAdventurerForward(firstAdventurer.getOrientation(),firstAdventurer.getPosition(),mountains,adventurersPosition));
-    }
-
-    @Test
-    void is_mountain_or_adventurer_forward_should_return_false_east_case() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.EAST,new Position(2,2));
-        Adventurer otherAdventurer  = new Adventurer("other", new LinkedList<>(), Orientation.SOUTH,new Position(2,3));
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("IsMountainOrAdventurerForwardAdventurerPositions")
+    void utest_is_mountain_or_adventurer_forward(String name, Orientation orientation, int horizontalPos, int verticalPos, boolean expect) {
+        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), orientation,new Position(horizontalPos,verticalPos));
+        Adventurer otherAdventurer  = new Adventurer("other", new LinkedList<>(), Orientation.SOUTH,new Position(2,2));
         adventurerList = new LinkedList<>();
         adventurerList.add(lambdaAdventurer);
         adventurerList.add(otherAdventurer);
@@ -156,21 +84,8 @@ class TreasureMapTest {
         TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
         Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
         List<Position> adventurersPosition = adventurerList.stream().map(adventurer -> adventurer.getPosition()).collect(Collectors.toList());
-        assertEquals(false, treasureMap.isMountainOrAdventurerForward(firstAdventurer.getOrientation(),firstAdventurer.getPosition(),mountains,adventurersPosition));
+        assertEquals(expect, treasureMap.isMountainOrAdventurerForward(firstAdventurer.getOrientation(),firstAdventurer.getPosition(),mountains,adventurersPosition));
     }
 
-    @Test
-    void is_mountain_or_adventurer_forward_should_return_false_west_case() {
-        lambdaAdventurer = new Adventurer("lambda", new LinkedList<>(), Orientation.WEST,new Position(2,2));
-        Adventurer otherAdventurer  = new Adventurer("other", new LinkedList<>(), Orientation.SOUTH,new Position(2,3));
-        adventurerList = new LinkedList<>();
-        adventurerList.add(lambdaAdventurer);
-        adventurerList.add(otherAdventurer);
-
-        TreasureMap treasureMap = new TreasureMap(3,3,adventurerList,mountains,treasures);
-        Adventurer firstAdventurer = treasureMap.getAdventurers().get(0);
-        List<Position> adventurersPosition = adventurerList.stream().map(adventurer -> adventurer.getPosition()).collect(Collectors.toList());
-        assertEquals(false, treasureMap.isMountainOrAdventurerForward(firstAdventurer.getOrientation(),firstAdventurer.getPosition(),mountains,adventurersPosition));
-    }
 
 }
