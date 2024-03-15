@@ -1,18 +1,18 @@
 # Treasure Map Project
 
 ## Introduction
-Within this project, I present my implementation of Carbon IT's technical test challenge : "La carte au trésor".
+Within this project, I present my implementation of Carbon IT's technical test challenge : "La carte aux trésors".
 
 ## How to execute the Project
 
 1. Clone this repository to your local machine
 2. Option 1 : Excute with IDE
-   i. Open the project with your preferred IDE.
-   ii. Execute the Main Class located at src/main/java/youcef/treasureProject/Main.java
-4. Option 2: mvn command line
-   i. Get to the project root
-   ii. Execute the command "mvn clean install"
-   iii. Execute the command "mvn exec:java"
+   1. Open the project with your preferred IDE. 
+   2. Execute the Main Class located at src/main/java/youcef/treasureProject/Main.java
+3. Option 2: mvn command line 
+   1. Get to the project root 
+   2. Execute the command "mvn clean install"
+   3. Execute the command "mvn exec:java"
 
 ## How to test the application with your own data:
 
